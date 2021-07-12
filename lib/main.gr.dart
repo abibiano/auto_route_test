@@ -24,7 +24,10 @@ class AppRouter extends _i1.RootStackRouter {
         routeData: routeData,
         builder: (data) {
           final args = data.argsAs<SecondPageRouteArgs>();
-          return _i3.SecondPage(key: args.key, item: args.item);
+          return _i3.SecondPage(
+              key: args.key,
+              item: args.item,
+              onButtonPressed: args.onButtonPressed);
         })
   };
 
@@ -42,18 +45,25 @@ class HomePageRoute extends _i1.PageRouteInfo {
 }
 
 class SecondPageRoute extends _i1.PageRouteInfo<SecondPageRouteArgs> {
-  SecondPageRoute({_i2.Key? key, required String item})
+  SecondPageRoute(
+      {_i2.Key? key,
+      required String item,
+      required void Function(String) onButtonPressed})
       : super(name,
             path: '/second-page',
-            args: SecondPageRouteArgs(key: key, item: item));
+            args: SecondPageRouteArgs(
+                key: key, item: item, onButtonPressed: onButtonPressed));
 
   static const String name = 'SecondPageRoute';
 }
 
 class SecondPageRouteArgs {
-  const SecondPageRouteArgs({this.key, required this.item});
+  const SecondPageRouteArgs(
+      {this.key, required this.item, required this.onButtonPressed});
 
   final _i2.Key? key;
 
   final String item;
+
+  final void Function(String) onButtonPressed;
 }

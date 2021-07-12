@@ -1,11 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'main.gr.dart';
 
 void main() {
-  runApp(ProviderScope(child: MyApp()));
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -28,14 +27,17 @@ class MyApp extends StatelessWidget {
 )
 class $AppRouter {}
 
-final lastItemProvider = StateProvider<String>((ref) => '');
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
 
-class HomePage extends ConsumerWidget {
+class _HomePageState extends State<HomePage> {
   final myList = List<String>.generate(30, (index) => 'Item $index');
+  String lastItem = '';
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final lastItem = ref.watch(lastItemProvider).state;
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Home Page'),
@@ -47,6 +49,7 @@ class HomePage extends ConsumerWidget {
             context.router.push(
               SecondPageRoute(
                 item: myList[index],
+                onButtonPressed: itemPressed,
               ),
             );
           },
@@ -64,14 +67,23 @@ class HomePage extends ConsumerWidget {
       ),
     );
   }
+
+  void itemPressed(String item) {
+    setState(() {
+      lastItem = item;
+    });
+  }
 }
 
-class SecondPage extends ConsumerWidget {
+class SecondPage extends StatelessWidget {
   final String item;
+  final void Function(String item) onButtonPressed;
 
-  const SecondPage({Key? key, required this.item}) : super(key: key);
+  const SecondPage(
+      {Key? key, required this.item, required this.onButtonPressed})
+      : super(key: key);
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Second Page'),
@@ -80,7 +92,7 @@ class SecondPage extends ConsumerWidget {
         child: TextButton(
           child: Text('Pop and change last item to $item'),
           onPressed: () {
-            ref.read(lastItemProvider).state = item;
+            onButtonPressed(item);
             context.router.pop();
           },
         ),
